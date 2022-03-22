@@ -31,7 +31,10 @@ app.get("/urls/:shortURL", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];
-  res.redirect(307, longURL);
+  if (!urlDatabase[shortURL]) {
+    return res.send("No redirect exists for this Tiny URL");
+  }
+  res.redirect(301, longURL);
 });
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
@@ -52,5 +55,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Tiny app listening on port ${PORT}!`);
 });
