@@ -63,6 +63,14 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   // res.send("Item has been deleted");
   res.redirect("/urls");
 });
+app.post("/urls/:shortURL/edit", (req, res) => {
+  const shortURL = req.params.shortURL;
+  urlDatabase[shortURL] = req.body.longURL;
+  // if (!urlDatabase[shortURL]) {
+  //   return res.send("No redirect exists for this Tiny URL");
+  // }
+  res.redirect(302, "/urls/" + shortURL);
+});
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
