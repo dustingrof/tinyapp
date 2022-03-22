@@ -49,26 +49,19 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 app.post("/urls", (req, res) => {
-  // console.log(req.body);
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
-  // console.log(shortURL);
   res.redirect(302, "/urls/" + shortURL);
 });
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
   delete urlDatabase[shortURL];
-  // const templateVars = { urls: shortURL };
-  // res.render("urls_index", templateVars);
-  // res.send("Item has been deleted");
   res.redirect("/urls");
 });
 app.post("/urls/:shortURL/edit", (req, res) => {
   const shortURL = req.params.shortURL;
   urlDatabase[shortURL] = req.body.longURL;
-  // if (!urlDatabase[shortURL]) {
-  //   return res.send("No redirect exists for this Tiny URL");
-  // }
+
   res.redirect(302, "/urls/" + shortURL);
 });
 app.get("/", (req, res) => {
