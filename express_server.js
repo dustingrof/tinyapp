@@ -11,7 +11,7 @@ function generateRandomString() {
   return Math.random()
     .toString(36)
     .replace(/[^a-z]+/g, "")
-    .substr(0, 5);
+    .substr(0, 6);
 }
 
 const urlDatabase = {
@@ -37,7 +37,10 @@ app.get("/urls.json", (req, res) => {
 });
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  let shortURL = generateRandomString();
+  urlDatabase[shortURL] = urlDatabase.longURL;
+  res.redirect(302, "/urls:" + shortURL);
+  // res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
 // app.get("/", (req, res) => {
 //   res.send("Hello!");
