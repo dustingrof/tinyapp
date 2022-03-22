@@ -36,18 +36,12 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
+  console.log(req.body);
   let shortURL = generateRandomString();
-  urlDatabase[shortURL] = urlDatabase.longURL;
-  res.redirect(302, "/urls:" + shortURL);
-  // res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  urlDatabase[shortURL] = req.body.longURL;
+  console.log(shortURL);
+  res.redirect(302, "/urls/" + shortURL);
 });
-// app.get("/", (req, res) => {
-//   res.send("Hello!");
-// });
-// app.get("/hello", (req, res) => {
-//   res.send("<html><body>Hello <b>World</b></body></html>\n");
-// });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
