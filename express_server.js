@@ -7,17 +7,22 @@ app.set("view engine", "ejs");
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 
-function generateRandomString() {
+const generateRandomString = () => {
   return Math.random()
     .toString(36)
     .replace(/[^a-z]+/g, "")
     .substr(0, 6);
-}
-
+};
+//
+////database
+//
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   google: "http://www.google.com",
 };
+//
+////route
+//
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
@@ -44,11 +49,19 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 app.post("/urls", (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
-  console.log(shortURL);
+  // console.log(shortURL);
   res.redirect(302, "/urls/" + shortURL);
+});
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const shortURL = req.params.shortURL;
+  delete urlDatabase[shortURL];
+  // const templateVars = { urls: shortURL };
+  // res.render("urls_index", templateVars);
+  // res.send("Item has been deleted");
+  res.redirect("/urls");
 });
 app.get("/", (req, res) => {
   res.send("Hello!");
