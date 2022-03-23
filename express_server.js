@@ -32,11 +32,18 @@ const generateRandomString = (length) => {
 // ROUTES
 //
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = {
+    username: req.cookies["username"],
+  };
+  res.render("urls_new", templateVars);
 });
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
   res.render("urls_index", templateVars);
+});
+app.get("/register", (req, res) => {
+  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  res.render("register", templateVars);
 });
 app.get("/", (req, res) => {
   res.send("Hello!"); // will probably put better content here
@@ -76,7 +83,6 @@ app.post("/login", (req, res) => {
   res.cookie("username", username, { maxAge: 900000 });
   res.redirect("/urls");
 });
-
 
 //
 // UPDATE
