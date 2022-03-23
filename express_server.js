@@ -18,6 +18,10 @@ const urlDatabase = {
   google: "http://www.google.com",
 };
 
+const users = {
+  "a@b.ca": { username: "a@b.ca", password: "123" },
+};
+
 //
 // Functions
 //
@@ -43,7 +47,7 @@ app.get("/urls", (req, res) => {
 });
 app.get("/register", (req, res) => {
   const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
-  res.render("register", templateVars);
+  res.render("user_registration", templateVars);
 });
 app.get("/", (req, res) => {
   res.send("Hello!"); // will probably put better content here
@@ -78,10 +82,16 @@ app.post("/urls", (req, res) => {
   res.redirect(302, "/urls/" + shortURL);
 });
 app.post("/login", (req, res) => {
-  let cookieID = generateRandomString(8);
   let username = req.body.username;
   res.cookie("username", username, { maxAge: 900000 });
   res.redirect("/urls");
+});
+app.post("/register", (req, res) => {
+  let newUsername = req.body.username;
+  let newPassword = req.body.password;
+  users[newUsername] = { username: newUsername, password: newPassword };
+  // res.cookie("username", newUsername, { maxAge: 900000 });
+  res.redirect("/");
 });
 
 //
