@@ -19,7 +19,7 @@ const urlDatabase = {
 };
 
 const users = {
-  "a@b.ca": { username: "a@b.ca", password: "123" },
+  abcdefgh: { id: "abcdefgh", email: "a@b.ca", password: "123" },
 };
 
 //
@@ -87,11 +87,23 @@ app.post("/login", (req, res) => {
   res.redirect("/urls");
 });
 app.post("/register", (req, res) => {
-  let newUsername = req.body.username;
-  let newPassword = req.body.password;
-  users[newUsername] = { username: newUsername, password: newPassword };
-  // res.cookie("username", newUsername, { maxAge: 900000 });
-  res.redirect("/");
+  const userRandomId = generateRandomString(8);
+  const userEmail = req.body.email;
+  const userPassword = req.body.password;
+  for (const user in users) {
+    if (users[user].email === userEmail) {
+      res.redirect("/");
+      return;
+    }
+  }
+  users[userRandomId] = {
+    id: userRandomId,
+    email: userEmail,
+    password: userPassword,
+  };
+  res.cookie("user_id", userRandomId, { maxAge: 900000 });
+  // console.log(users);
+  res.redirect("/urls");
 });
 
 //
