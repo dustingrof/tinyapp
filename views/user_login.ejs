@@ -19,15 +19,15 @@
       href="https://cdn.jsdelivr.net/npm/@forevolve/bootstrap-dark@1.0.0/dist/css/bootstrap-dark.min.css"
     />
 
-    <title>User Registration - TinyApp Example</title>
+    <title>User Login - TinyApp Example</title>
   </head>
 
   <body>
     <%- include('partials/_header') %>
 
     <main style="margin: 2em">
-      <h3>Create Account</h3>
-      <form class="form-group" action="/register" method="POST">
+      <h3>Login</h3>
+      <form class="form-group" action="/login" method="POST">
         <div class="form-group mb-2">
           <label for="email">Email Address:</label>
           <input
@@ -45,7 +45,7 @@
             placeholder="Enter a password"
             style="width: 300px; margin: 0.5em 0 1em 0"
           />
-          <button type="submit" class="btn btn-light">Register</button>
+          <button type="submit" class="btn btn-light">Login</button>
         </div>
       </form>
     </main>
