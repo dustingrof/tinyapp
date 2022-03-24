@@ -103,10 +103,15 @@ app.get("/", (req, res) => {
   res.send("Hello!"); // will probably put better content here
 });
 app.get("/urls/:shortURL", (req, res) => {
+  if (!req.cookies["user_id"]) {
+    res.redirect("/login");
+    return;
+  }
   const userObject = users[req.cookies["user_id"]];
+  const shortURL = req.params.shortURL;
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
+    longURL: urlDatabase[shortURL].longURL,
     userObject,
   };
   res.render("urls_show", templateVars);
@@ -131,9 +136,9 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString(6);
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
-    userID: req.cookies("user_id"),
+    userID: res.cookie("user_id"),
   };
-  urlDatabase[shortURL].userID = req.cookies("user_id");
+  urlDatabase[shortURL].userID = res.cookie("user_id");
   res.redirect(302, "/urls/" + shortURL);
 });
 app.post("/login", (req, res) => {
