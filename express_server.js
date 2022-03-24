@@ -4,6 +4,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
+
 //
 // Middleware
 //
@@ -82,6 +83,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls", (req, res) => {
   if (!req.cookies["user_id"]) {
     res.redirect("/login");
+    return;
   }
   const user_id = req.cookies["user_id"];
   const userObject = users[user_id];
@@ -100,9 +102,15 @@ app.get("/login", (req, res) => {
   res.render("user_login", templateVars);
 });
 app.get("/", (req, res) => {
-  res.send("Hello!"); // will probably put better content here
+  const userObject = users[req.cookies["user_id"]];
+  const templateVars = { urls: urlDatabase, userObject };
+  res.render("index", templateVars);
 });
 app.get("/urls/:shortURL", (req, res) => {
+  if (!urlDatabase[req.params.shortURL]) {
+    res.status(404).render("404");
+    return;
+  }
   if (!req.cookies["user_id"]) {
     res.redirect("/login");
     return;
@@ -118,11 +126,11 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL].longURL;
   if (!urlDatabase[shortURL]) {
     return res.send("No redirect exists for this Tiny URL");
   }
-  res.redirect(301, longURL);
+  const longURL = urlDatabase[shortURL].longURL;
+  res.redirect(longURL);
 });
 
 // app.get("/urls.json", (req, res) => {
@@ -148,12 +156,12 @@ app.post("/login", (req, res) => {
   const userPassword = req.body.password;
   const emailExists = emailLookUp(userEmail);
   if (!emailExists) {
-    res.sendStatus(403);
+    res.status(403).render("403");
   }
   const userFound = getUser(userEmail);
   console.log("passwordFound", userFound);
   if (userFound.password && userFound.password !== userPassword) {
-    res.sendStatus(403);
+    res.status(403).render("403");
   }
   res.cookie("user_id", userFound.user_id, { maxAge: 900000 });
   res.redirect("/urls");
@@ -164,7 +172,7 @@ app.post("/register", (req, res) => {
   const userPassword = req.body.password;
   const emailExists = emailLookUp(userEmail);
   if (!userEmail || !userPassword || emailExists) {
-    res.sendStatus(400);
+    res.status(400).render("400");
     return;
   }
   users[userRandomId] = {
@@ -183,7 +191,7 @@ app.post("/register", (req, res) => {
 app.post("/urls/:shortURL/edit", (req, res) => {
   const shortURL = req.params.shortURL;
   urlDatabase[shortURL].longURL = req.body.longURL;
-  res.redirect(302, "/urls/" + shortURL);
+  res.redirect("/urls/" + shortURL);
 });
 
 //
