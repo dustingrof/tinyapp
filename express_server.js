@@ -48,12 +48,8 @@ app.use(
 //
 // Database
 //
-// const urlDatabase = {
-//   b2xVn2: "http://www.lighthouselabs.ca",
-//   google: "http://www.google.com",
-// };
 const urlDatabase = {
-  b2xVn2: { longURL: "http://www.lighthouselabs.ca", userID: "abcdefgh" },
+  lhlabs: { longURL: "http://www.lighthouselabs.ca", userID: "abcdefgh" },
   google: { longURL: "http://www.google.com", userID: "abcdefgh" },
   helloo: { longURL: "http://www.helloworld.com", userID: "abcdefu" },
 };

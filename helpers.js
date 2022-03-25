@@ -10,25 +10,31 @@ const getUser = (email, database) => {
       return userFound;
     }
   }
-  return userFound;
+  return;
 };
 
 // this function was supposed to be defined as urlsForUser(id)
 const getUserUrls = (user_id, database) => {
-  let userUrls = {};
+  let userUrls;
   for (let urlKey in database) {
     if (database[urlKey].userID === user_id) {
+      userUrls = {};
       userUrls[urlKey] = database[urlKey];
     }
   }
+  // if (userUrls === {}) return undefined;
   return userUrls;
 };
 
 const generateRandomString = (length) => {
-  return Math.random()
-    .toString(36)
-    .replace(/[^a-z]+/g, "")
-    .substr(0, length);
+  let result = "";
+  let characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 };
 
 const emailLookUp = (email, database) => {
