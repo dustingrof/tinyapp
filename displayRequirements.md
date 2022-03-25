@@ -3,7 +3,7 @@
 - Site Header
   - If a user is logged in, the header shows:
     - [x] the user's email
-    - [ ] a logout button which makes a POST request to `/logout`
+    - [x] a logout button which makes a POST request to `/logout`
   - If a user is not logged in, the header shows:
     - [x] a link to the login page (`/login`)
     - [x] a link to the registration page (`/register`)
@@ -12,18 +12,18 @@
 
 - `GET /`
   - If user is logged in:
-    - [ ] (Minor) redirect to `/urls`
+    - [x] (Minor) redirect to `/urls`
   - If user is not logged in:
     - [ ] (Minor) redirect to `/login`
 - `GET /urls`
   - If user is logged in:
     - returns HTML with:
-    - [ ] the site header (see Display Requirements above)
+    - [x] the site header (see Display Requirements above)
     - [ ] a list (or table) of URLs the user has created, each list item containing:
-      - [ ] a short URL
-      - [ ] the short URL's matching long URL
-      - [ ] an edit button which makes a GET request to `/urls/:id`
-      - [ ] a delete button which makes a POST request to `/urls/:id/delete`
+      - [x] a short URL
+      - [x] the short URL's matching long URL
+      - [x] an edit button which makes a GET request to `/urls/:id`
+      - [x] a delete button which makes a POST request to `/urls/:id/delete`
       - [ ] (Stretch) the date the short URL was created
       - [ ] (Stretch) the number of times the short URL was visited
       - [ ] (Stretch) the number of unique visits for the short URL
@@ -33,10 +33,10 @@
 - `GET /urls/new`
   - If user is logged in:
     - [ ] returns HTML with:
-    - [ ] the site header (see Display Requirements above)
-    - [ ] a form which contains:
-      - [ ] a text input field for the original (long) URL
-      - [ ] a submit button which makes a POST request to `/urls/`
+    - [x] the site header (see Display Requirements above)
+    - [x] a form which contains:
+      - [x] a text input field for the original (long) URL
+      - [x] a submit button which makes a POST request to `/urls/`
   - If user is not logged in:
     - [ ] redirects to the `/login` page
 - `GET /urls/:id`
