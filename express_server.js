@@ -11,6 +11,8 @@ app.set("view engine", "ejs");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 app.use(bodyParser.urlencoded({ extended: true }), cookieParser());
+const bcrypt = require("bcryptjs");
+const salt = bcrypt.genSaltSync(10);
 
 //
 // Database
@@ -26,8 +28,16 @@ const urlDatabase = {
 };
 
 const users = {
-  abcdefgh: { user_id: "abcdefgh", email: "a@b.ca", password: "123" },
-  abcdefu: { user_id: "abcdefu", email: "b@c.ca", password: "123" },
+  abcdefgh: {
+    user_id: "abcdefgh",
+    email: "a@b.ca",
+    password: "$2a$10$ohx2UJk26MBZkTw.Ia8nxOEfzuCED4fSIyB.Hy02PKg560PxgRs22", //123
+  },
+  abcdefu: {
+    user_id: "abcdefu",
+    email: "b@c.ca",
+    password: "$2a$10$ohx2UJk26MBZkTw.Ia8nxOEfzuCED4fSIyB.Hy02PKg560PxgRs22", //123
+  },
 };
 
 //
@@ -157,21 +167,22 @@ app.post("/urls", (req, res) => {
     userID: res.cookie("user_id"),
   };
   urlDatabase[shortURL].userID = res.cookie("user_id");
-  res.redirect(302, "/urls/" + shortURL);
+  res.redirect("/urls/" + shortURL);
 });
 
 app.post("/login", (req, res) => {
-  // let user_id = req.body.user_id;
-  // console.log("this is body", req.body);
   const userEmail = req.body.email;
-  const userPassword = req.body.password;
+  const userPassword = bcrypt.hashSync(req.body.password);
   const emailExists = emailLookUp(userEmail);
   if (!emailExists) {
     res.status(403).render("403");
   }
   const userFound = getUser(userEmail);
   console.log("passwordFound", userFound);
-  if (userFound.password && userFound.password !== userPassword) {
+  if (
+    userFound.password &&
+    bcrypt.compareSync(userFound.password, userPassword)
+  ) {
     res.status(403).render("403");
   }
   res.cookie("user_id", userFound.user_id, { maxAge: 900000 });
@@ -179,14 +190,14 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const userRandomId = generateRandomString(8);
   const userEmail = req.body.email;
-  const userPassword = req.body.password;
+  const userPassword = bcrypt.hashSync(req.body.password);
   const emailExists = emailLookUp(userEmail);
   if (!userEmail || !userPassword || emailExists) {
     res.status(400).render("400");
     return;
   }
+  const userRandomId = generateRandomString(8);
   users[userRandomId] = {
     id: userRandomId,
     email: userEmail,
