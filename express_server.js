@@ -4,6 +4,15 @@ const app = express();
 const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
+//
+// Helper Functions
+//
+const {
+  getUser,
+  getUserUrls,
+  generateRandomString,
+  emailLookUp,
+} = require("./helpers");
 
 //
 // Middleware
@@ -63,47 +72,6 @@ const users = {
 };
 
 //
-// Helper Functions
-//
-const getUser = (email) => {
-  let userFound = {};
-  for (const userKey in users) {
-    if (users[userKey].email === email) {
-      userFound["user_id"] = userKey;
-      userFound["password"] = users[userKey].password;
-      return userFound;
-    }
-  }
-  return userFound;
-};
-
-// this function was supposed to be defined as urlsForUser(id)
-const getUserUrls = (user_id) => {
-  let userUrls = {};
-  for (let urlKey in urlDatabase) {
-    if (urlDatabase[urlKey].userID === user_id) {
-      userUrls[urlKey] = urlDatabase[urlKey];
-    }
-  }
-  return userUrls;
-};
-
-const generateRandomString = (length) => {
-  return Math.random()
-    .toString(36)
-    .replace(/[^a-z]+/g, "")
-    .substr(0, length);
-};
-
-const emailLookUp = (email) => {
-  for (const userKey in users) {
-    if (users[userKey].email === email) {
-      return true;
-    }
-  }
-  return false;
-};
-//
 // ROUTES
 //
 app.get("/urls/new", (req, res) => {
@@ -124,7 +92,7 @@ app.get("/urls", (req, res) => {
   }
   const user_id = req.session.user;
   const userObject = users[user_id];
-  const userUrls = getUserUrls(user_id);
+  const userUrls = getUserUrls(user_id, urlDatabase);
   const templateVars = { urls: userUrls, userObject };
   res.render("urls_index", templateVars);
 });
@@ -195,11 +163,11 @@ app.post("/urls", (req, res) => {
 app.post("/login", (req, res) => {
   const userEmail = req.body.email;
   const userPassword = req.body.password;
-  const emailExists = emailLookUp(userEmail);
+  const emailExists = emailLookUp(userEmail, users);
   if (!emailExists) {
     return res.status(403).send("incorrect email");
   }
-  const userFound = getUser(userEmail);
+  const userFound = getUser(userEmail, users);
   // console.log("passwordFound", userFound);
   if (
     userFound.password &&
@@ -214,11 +182,11 @@ app.post("/login", (req, res) => {
 
 app.post("/register", (req, res) => {
   const userEmail = req.body.email;
-  console.log("userEmail", userEmail);
+  // console.log("userEmail", userEmail);
   const userPassword = bcrypt.hashSync(req.body.password);
-  console.log("userPassword", userPassword);
-  const emailExists = emailLookUp(userEmail);
-  console.log("emailExists", emailExists);
+  // console.log("userPassword", userPassword);
+  const emailExists = emailLookUp(userEmail, users);
+  // console.log("emailExists", emailExists);
   if (!userEmail || !userPassword || emailExists) {
     res
       .status(400)
