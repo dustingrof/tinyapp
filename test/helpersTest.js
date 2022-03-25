@@ -56,11 +56,15 @@ describe("getUser", function () {
 
 describe("getUserUrls", function () {
   it("should return a an object of objects with URLs associated with to user", function () {
-    const user = getUserUrls("abcdefu", urlDatabase);
+    const user = getUserUrls("abcdefgh", urlDatabase);
     const expectedUserUrls = {
-      helloo: {
-        longURL: "http://www.helloworld.com",
-        userID: "abcdefu",
+      lhlabs: {
+        longURL: "http://www.lighthouselabs.ca",
+        userID: "abcdefgh",
+      },
+      google: {
+        longURL: "http://www.google.com",
+        userID: "abcdefgh",
       },
     };
     // Write your assert statement here

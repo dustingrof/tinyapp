@@ -41,7 +41,7 @@
     - [x] redirects to the `/login` page
 - `GET /urls/:id`
   - if user is logged in and owns the URL for the given ID:
-    - [ ] returns HTML with:
+    - [x] returns HTML with:
     - [x] the site header (see Display Requirements above)
     - [x] the short URL (for the given ID)
     - [ ] a form which contains:

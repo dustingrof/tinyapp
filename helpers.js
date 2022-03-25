@@ -15,14 +15,16 @@ const getUser = (email, database) => {
 
 // this function was supposed to be defined as urlsForUser(id)
 const getUserUrls = (user_id, database) => {
-  let userUrls;
+  let userUrls = {};
   for (let urlKey in database) {
     if (database[urlKey].userID === user_id) {
-      userUrls = {};
       userUrls[urlKey] = database[urlKey];
     }
   }
   // if (userUrls === {}) return undefined;
+  if (Object.keys(userUrls).length === 0 && userUrls.constructor === Object) {
+    return undefined;
+  }
   return userUrls;
 };
 

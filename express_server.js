@@ -94,12 +94,20 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
+  if (req.session.user) {
+    res.redirect("/urls");
+    return;
+  }
   const userObject = users[req.session.user];
   const templateVars = { urls: urlDatabase, userObject };
   res.render("user_registration", templateVars);
 });
 
 app.get("/login", (req, res) => {
+  if (req.session.user) {
+    res.redirect("/urls");
+    return;
+  }
   const userObject = users[req.session.user];
   const templateVars = { urls: urlDatabase, userObject };
   res.render("user_login", templateVars);
@@ -133,7 +141,7 @@ app.get("/urls/:shortURL", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   if (!urlDatabase[shortURL]) {
-    return res.send("No redirect exists for this Tiny URL");
+    return res.render("404");
   }
   const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
@@ -183,12 +191,12 @@ app.post("/register", (req, res) => {
   // console.log("userPassword", userPassword);
   const emailExists = emailLookUp(userEmail, users);
   // console.log("emailExists", emailExists);
-  if (!userEmail || !userPassword || emailExists) {
-    res
-      .status(400)
-      .send(
-        "either, you have an account already or you left one of the required fields empty"
-      );
+  if (!userEmail || !userPassword) {
+    res.status(400).send("Both email and password are required.");
+    return;
+  }
+  if (emailExists) {
+    res.status(400).send("You have an account already.");
     return;
   }
   const userRandomId = generateRandomString(8);

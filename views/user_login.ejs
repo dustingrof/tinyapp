@@ -27,6 +27,7 @@
 
     <main style="margin: 2em">
       <h3>Login</h3>
+      <p>You must login to view pages on this site.</p>
       <form class="form-group" action="/login" method="POST">
         <div class="form-group mb-2">
           <label for="email">Email Address:</label>
@@ -36,6 +37,7 @@
             name="email"
             placeholder="Enter email address"
             style="width: 300px; margin: 0.5em 0 1em 0"
+            required
           />
           <label for="password">Enter Password:</label>
           <input
@@ -44,6 +46,7 @@
             name="password"
             placeholder="Enter a password"
             style="width: 300px; margin: 0.5em 0 1em 0"
+            required
           />
           <button type="submit" class="btn btn-light">Login</button>
         </div>
