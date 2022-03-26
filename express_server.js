@@ -49,9 +49,30 @@ app.use(
 // Database
 //
 const urlDatabase = {
-  lhlabs: { longURL: "http://www.lighthouselabs.ca", userID: "abcdefgh" },
-  google: { longURL: "http://www.google.com", userID: "abcdefgh" },
-  helloo: { longURL: "http://www.helloworld.com", userID: "abcdefu" },
+  lhlabs: {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "abcdefgh",
+    timestamp: "1648251101",
+    dateCreated: "Fri Mar 25 2022 16:59:25 GMT-0700 (Pacific Daylight Time)",
+    timesVisited: 33,
+    uniqueVisits: 1,
+  },
+  google: {
+    longURL: "http://www.google.com",
+    userID: "abcdefgh",
+    timestamp: "1608251101",
+    dateCreated: "Thu Dec 17 2020 16:59:25 GMT-0700 (Pacific Daylight Time)",
+    timesVisited: 21,
+    uniqueVisits: 2,
+  },
+  helloo: {
+    longURL: "http://www.helloworld.com",
+    userID: "abcdefu",
+    timestamp: "1648051101",
+    dateCreated: "Wed Mar 23 2022 16:59:25 GMT-0700 (Pacific Daylight Time)",
+    timesVisited: 123,
+    uniqueVisits: 3,
+  },
 };
 
 const users = {
@@ -71,6 +92,7 @@ const users = {
 // ROUTES
 //
 app.get("/urls/new", (req, res) => {
+  //if user is not logged in send them to the login page
   if (!req.session.user) {
     res.redirect("/login");
   }
@@ -82,6 +104,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  //if user is not logged in send them to the login page
   if (!req.session.user) {
     res.redirect("/login");
     return;
@@ -94,6 +117,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
+  //if the user is logged in already send them to the URLs page
   if (req.session.user) {
     res.redirect("/urls");
     return;
@@ -104,6 +128,7 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
+  //if the user is logged in already send them to the URLs page
   if (req.session.user) {
     res.redirect("/urls");
     return;
@@ -120,10 +145,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+  //if the shorturl doesnt exist let them know
   if (!urlDatabase[req.params.shortURL]) {
     res.status(404).render("404");
     return;
   }
+  // if they arent logged in tell them they don't have access to this page
   if (req.session.user !== urlDatabase[req.params.shortURL].userID) {
     res.status(403).render("403");
     return;
@@ -140,16 +167,14 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
+  // if url doesnt exist in the database tell them page not found
   if (!urlDatabase[shortURL]) {
     return res.render("404");
   }
   const longURL = urlDatabase[shortURL].longURL;
+  urlDatabase[shortURL].timesVisited += 1;
   res.redirect(longURL);
 });
-
-// app.get("/urls.json", (req, res) => {
-//   res.json(urlDatabase);
-// }); // can probably delete this at some point...
 
 //
 // CREATE
@@ -158,7 +183,10 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString(6);
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
-    userID: req.session.user, // had this as res.cookies("user_id") before session existed
+    userID: req.session.user,
+    timestamp: Date.now(),
+    dateCreated: new Date(),
+    timesVisited: 0, //for stretch to track unique id's
   };
   urlDatabase[shortURL].userID = req.session.user;
   res.redirect("/urls/" + shortURL);
@@ -172,27 +200,22 @@ app.post("/login", (req, res) => {
     return res.status(403).send("incorrect email");
   }
   const userFound = getUser(userEmail, users);
-  // console.log("passwordFound", userFound);
   if (
     userFound.password &&
     !bcrypt.compareSync(userPassword, userFound.password)
   ) {
     return res.status(403).send("password doesnt match");
   }
-  // res.cookie("user_id", userFound.user_id, { maxAge: 900000 });
   req.session.user = userFound.user_id;
   res.redirect("/urls");
 });
 
 app.post("/register", (req, res) => {
   const userEmail = req.body.email;
-  // console.log("userEmail", userEmail);
   const userPassword = bcrypt.hashSync(req.body.password);
-  // console.log("userPassword", userPassword);
   const emailExists = emailLookUp(userEmail, users);
-  // console.log("emailExists", emailExists);
   if (!userEmail || !userPassword) {
-    res.status(400).send("Both email and password are required.");
+    res.status(400).render("400");
     return;
   }
   if (emailExists) {
@@ -205,9 +228,7 @@ app.post("/register", (req, res) => {
     email: userEmail,
     password: userPassword,
   };
-  // res.cookie("user_id", userRandomId, { maxAge: 900000 });
   req.session.user = users[userRandomId].user_id;
-  // console.log(users);
   res.redirect("/urls");
 });
 
